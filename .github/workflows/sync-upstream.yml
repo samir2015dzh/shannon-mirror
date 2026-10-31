@@ -1,0 +1,21 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: '53 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync all branches and tags from upstream
+        env:
+          TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          git clone --bare https://github.com/KeygraphHQ/shannon.git upstream.git
+          cd upstream.git
+          git push --force "https://x-access-token:${TOKEN}@github.com/samir2015dzh/shannon-mirror.git" '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
